@@ -1,5 +1,7 @@
 window.requestAnimFrame = (function(callback){
-  return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame ||window.msRequestAnimationFrame ||
+  return window.requestAnimationFrame || window.webkitRequestAnimationFrame 
+      || window.mozRequestAnimationFrame || window.oRequestAnimationFrame 
+      || window.msRequestAnimationFrame ||
   function(callback){
     window.setTimeout(callback, 1000 / 60);
   };
@@ -31,7 +33,10 @@ window.onload = function(){
 
   // renderer
   var renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
+  var widthSize = 430; // window.innerWidth / 3;
+  var heightSize = 215; //window.innerHeight / 3;
+
+  renderer.setSize(widthSize, heightSize);
   document.body.appendChild(renderer.domElement);
 
   // camera
