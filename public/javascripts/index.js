@@ -28,33 +28,50 @@ function animate(lastTime, angularSpeed, three){
 }
 
 window.onload = function(){
-  var angularSpeed = 0.2; // revolutions per second
+  var angularSpeed = 0.1; // revolutions per second
   var lastTime = 0;
+
+  var $elem = document.getElementById('container');
 
   // renderer
   var renderer = new THREE.WebGLRenderer();
-  var widthSize = 430; // window.innerWidth / 3;
-  var heightSize = 215; //window.innerHeight / 3;
+  var widthSize = parseInt($elem.attributes[0].nodeValue);// / 3); //430; // window.innerWidth / 3;
+  var heightSize = parseInt($elem.attributes[1].nodeValue); // / 3); //215; //window.innerHeight / 3;
+
+  console.log(widthSize, heightSize)
 
   renderer.setSize(widthSize, heightSize);
-  document.body.appendChild(renderer.domElement);
+  
+  $elem.appendChild(renderer.domElement);
+  // document.body.appendChild(renderer.domElement);
 
   // camera
+  // var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
   var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 1000);
   camera.position.z = 300;
 
   // scene
   var scene = new THREE.Scene();
 
-  // material
+  // MeshLambertMaterial
   var material = new THREE.MeshLambertMaterial({
     map: THREE.ImageUtils.loadTexture("/images/crate.jpg")
   });
 
   // cube
-  var cube = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), material);
+/*  var cube = new THREE.Mesh(new THREE.CubeGeometry(100, 100, 100), material);
   cube.overdraw = true;
+  scene.add(cube);*/
+  var cube = new Cube (50, 50, 50, material);
   scene.add(cube);
+
+  window.cube = cube;
+
+  function Cube (x, y, z, material) {
+    var cube = new THREE.Mesh(new THREE.CubeGeometry(x, y, z, 1, 1, 1), material);
+    cube.overdraw = true;
+    return cube;
+  }
 
   // add subtle ambient lighting
   var ambientLight = new THREE.AmbientLight(0x555555);
