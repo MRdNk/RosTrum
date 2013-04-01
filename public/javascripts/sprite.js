@@ -73,7 +73,7 @@
     layer.add(sheep)
     stage.add(background_layer)
     stage.add(layer)
-    
+
     background_layer.clear()
 
     window.onkeydown = function (e) {
@@ -90,7 +90,6 @@
         case KEYS.DOWN:
           move(sheep, null, MOVEMENT.DOWN)
           break;
-
       }
     }
 
@@ -122,7 +121,6 @@
         shape.setDirectionY(y)
         runAnimation(sheep, 'sheep')
       }
-      
     }
 
     function runAnimation (shape, animation, isX) {
