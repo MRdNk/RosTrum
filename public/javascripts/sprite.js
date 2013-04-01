@@ -5,6 +5,10 @@
     , RIGHT: 39 
     , UP: 38
     , DOWN: 40
+    , W: 87
+    , D: 68
+    , A: 65
+    , S: 83
   }
 
   var MOVEMENT = {
@@ -22,25 +26,27 @@
     , 'border-radius': 4
   })
 
+  var jumpPoint
+
   var background_layer = new Kinetic.Layer()
   var layer = new Kinetic.Layer()
 
-  var animal = 0;
-  var animals = ['sheep', 'swan', 'horse', 'dolphin', 'cow', 'dog', 'pig', 'duck'];
-  var animations = {};
+  var animal = 0
+  var animals = ['sheep', 'swan', 'horse', 'dolphin', 'cow', 'dog', 'pig', 'duck']
+  var animations = {}
 
   for (var i = 0; i < animals.length; i++) {
     var array = []
 
     for (var x = 0; x < 4; x++) {
-      array[x] = {};
-      array[x].x = (x === 0) ? 2 : 120 * x;
-      array[x].y = 90 * i;
-      array[x].width = 120;
-      array[x].height = 90;  
+      array[x] = {}
+      array[x].x = (x === 0) ? 2 : 120 * x
+      array[x].y = 90 * i
+      array[x].width = 120
+      array[x].height = 90  
     }
     
-    animations[animals[i]] = array;
+    animations[animals[i]] = array
   }
 
   var background = new Kinetic.Rect({
@@ -54,8 +60,8 @@
   var imageObj = new Image()
   imageObj.onload = function () {
 
-    Kinetic.Node.addGetterSetter(Kinetic.Sprite, 'directionX', 0);
-    Kinetic.Node.addGetterSetter(Kinetic.Sprite, 'directionY', 0);
+    Kinetic.Node.addGetterSetter(Kinetic.Sprite, 'directionX', 0)
+    Kinetic.Node.addGetterSetter(Kinetic.Sprite, 'directionY', 0)
 
     var sheep = new Kinetic.Sprite({
         x: 120
@@ -79,34 +85,35 @@
     window.onkeydown = function (e) {
       switch (e.keyCode) {
         case KEYS.LEFT: 
+        case KEYS.A:
           move(sheep, MOVEMENT.LEFT)
-          break;
+          break
         case KEYS.RIGHT: 
+        case KEYS.D:
           move(sheep, MOVEMENT.RIGHT)
-          break;
+          break
         case KEYS.UP:
+        case KEYS.W:
+          jumpPoint = sheep.getY()
           move(sheep, null, MOVEMENT.UP)
-          break;
+          break
         case KEYS.DOWN:
-          move(sheep, null, MOVEMENT.DOWN)
-          break;
+        case KEYS.S:
+          // move(sheep, null, MOVEMENT.DOWN)
+          break
       }
     }
 
     window.onkeyup = function (e) {
       switch (e.keyCode) {
-        case KEYS.LEFT: 
+        case KEYS.LEFT:
+        case KEYS.A:
           animX.stop()
-          break;
+          break
         case KEYS.RIGHT: 
+        case KEYS.D:
           animX.stop()
-          break;
-        case KEYS.UP:
-          animY.stop()
-          break;
-        case KEYS.DOWN:
-          animY.stop()
-          break;
+          break
       }
       
       if(!animX.isRunning() && !animY.isRunning()) sheep.stop()
@@ -129,19 +136,35 @@
     }
 
     var animX = new Kinetic.Animation (function (frame) {
-      var locX = (sheep.getX() > stage.getWidth()) ? 0 - sheep.getWidth() : sheep.getX() + sheep.getDirectionX();
+      var locX = (sheep.getX() > stage.getWidth()) ? 0 - sheep.getWidth() : sheep.getX() + sheep.getDirectionX()
       sheep.start()
       sheep.setX (locX)
     }, layer)
 
-
     var animY = new Kinetic.Animation (function (frame) {
-      var locY = (sheep.getY() > stage.getHeight()) ? 0 - sheep.getHeight() : sheep.getY() + sheep.getDirectionY();
-      sheep.start()
-      sheep.setY (locY)
+      
+      if (sheep.getDirectionY() === MOVEMENT.DOWN) {
+        sheep.setY(sheep.getY() + sheep.getDirectionY())
+        if (sheep.getY() === jumpPoint) {
+          animY.stop()
+          sheep.stop()
+          sheep.index = 0;
+          console.log('at jumpPoint')
+        }
+      }
+      else {
+        var locY = (sheep.getY() > stage.getHeight()) ? 0 - sheep.getHeight() : sheep.getY() + sheep.getDirectionY()
+        sheep.start()
+        sheep.setY (locY)
+        setTimeout (function () {
+          sheep.setDirectionY(MOVEMENT.DOWN)
+          sheep.start()
+          animY.start()
+          sheep.index = 0;
+        }, 300)
+      }
     }, layer)
   }
 
   imageObj.src = '/images/animals.png'
-
 }())
